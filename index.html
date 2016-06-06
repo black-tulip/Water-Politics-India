@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <title>Water and Political Unrest in India</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    
+    <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+    <script src='https://code.jquery.com/jquery-1.12.0.min.js'></script>
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+    <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
+    <link href='https://fonts.googleapis.com/css?family=Work+Sans:400,500,600' rel='stylesheet' type='text/css'>
+    <style>
+
+        
+        body {
+          margin:0;
+          padding:0;
+          font-family: "Work Sans", sans-serif;
+          color: '#191B28'
+        }
+        h1 {
+            color: whitesmoke;
+            background: #004563;
+            margin: 0;
+            padding: 8px 25px 8px 15px;
+        }
+        h2 {
+            margin: 0;
+            padding: 8px 25px 8px 15px;
+            color: #191B28;
+            font-weight: 500;
+            font-size: 1em;
+            text-align: center;
+            background: whitesmoke;
+        }
+        h3 {
+            color: whitesmoke;
+            background: #004563;
+        }
+        #map {
+          position:absolute;
+          top:0;
+          bottom:0;
+          left:0;
+          width: 100%;
+        }
+        #ui-slider {
+            position: absolute;
+            bottom: 20px;
+            right: 35%;
+            color: #004563;
+            padding: 6px 15px 8px;
+            background: #2E5387;
+            width: 30%;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+        .slider {
+            width: 100%;
+            }
+        #year {
+            position: absolute;
+            right: 35%;
+            width: 30%;
+            bottom: 60px;
+            padding: 6px 15px 8px;
+            background: #2E5387;
+            color: whitesmoke;
+            text-align: center;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            }
+        #year {
+            color: whitesmoke;
+        }
+        #legend {
+            position: absolute;
+            left: 66%;
+            bottom: 20px;
+            border-radius: 5px; 
+            color: whitesmoke;
+            
+        }
+        #legend h3 {
+            text-align: right;
+            font-weight: 500;
+            color: whitesmoke;
+            border-radius: 5px;
+        }
+        #info {
+            padding: 8px 15ps;
+            position: absolute;
+            text-align: center;
+            max-width: 250px;
+            right: 15px;
+            top: 15px;
+            display: none;
+            background: whitesmoke;
+            border: 2px solid #d3d3d3;
+            padding: 2px 6px;
+            border-radius: 5px;
+        }
+        #info p {
+            margin: 3px 0 4px;
+            font-size: .7em;
+        }
+        #info span:last-child {
+            font-size: 1.3em;
+            font-weight: 500;
+            color: #191B28;
+        }
+        .bullet {
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold
+        }
+        
+        
+    </style>
+</head>
+<body>
+
+    <div id='map'></div>
+
+<div id='legend'>	
+        <div class="bullet" style="background: #F11810"> EXTREMELY HIGH WATER RISK </div>
+		<div class="bullet" style="background: #FF5C00"> HIGH WATER RISK </div> 
+		<div class="bullet" style="background: #FF9900"> MEDIUM TO HIGH WATER RISK </div>
+        <div class="bullet" style="background: #FFCC00"> LOW TO MEDIUM WATER RISK </div>
+	
+</div>
+    <div id="ui-slider">
+         <input type="range" min="January 2015", max="Current", value="1", step="1" class="slider">
+    </div>
+    <div id='year'><b>Month, Year: </b><span>January 2015</span></div>
+    <div id="info">
+        <h2><span></span></h2>
+        <p class="notes"><span></span></p>
+    </div>
+    
+    <script>
+        L.mapbox.accessToken = 'pk.eyJ1Ijoicmdkb25vaHVlIiwiYSI6Im5Ua3F4UzgifQ.PClcVzU5OUj17kuxqsY_Dg';
+        var map = L.mapbox.map('map', 'mapbox.light', {
+            center: [21.14, 79.08],
+            zoom: 5,
+            minZoom: 1,
+            maxZoom: 9,
+//            maxBounds: L.latLngBounds([-6.22, 27.72],[5.76, 47.83])
+        });
+        
+        var currentMonth = 2015 
+        var states,
+            events
+        
+        
+        
+         waterRisk = $.getJSON("https://nilslewis.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM indiawater", function(data) {
+             
+//            console.log(data);            
+        
+            function getColor(d) {
+                return d == "Extremely high risk (4-5)" ? '#F11810' :
+                       d == "High risk (3-4)" ? '#FF5C00' :
+                       d == "Medium to high risk (2-3)" ? '#FF9900' :
+                       d == "Low to medium risk (1-2)" ? '#FFCC00' :
+                        '#FFEDA0';
+                }
+
+            function style(feature) {
+            return {
+                fillColor: getColor(feature.properties['owr_cat']),
+                weight: .3,
+                opacity: .8,
+                color: getColor(feature.properties['owr_cat']),
+                fillOpacity: 0.7
+                };
+            }
+
+            L.geoJson(data, {style: style}).addTo(map);
+         
+         });
+       
+        var eventData = omnivore.geojson("https://nilslewis.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM acled_india_water")
+            
+            .on('ready', function(e) {
+                $.getJSON('https://nilslewis.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM india_states', function(data) {
+                    
+                        drawMap(e.target.toGeoJSON(), data)
+                });
+            })
+            .on('error', function(e) {
+                console.log(e.error[0].message);
+            });
+        
+        function drawMap(acledData, geoData) {
+            
+           states = L.geoJson(geoData, {
+                 style: function(feature) {
+                    return {
+                            weight: .5,
+                            fillOpacity: 0,
+                        };
+                }                
+            }).addTo(map);
+            
+            
+            events = L.geoJson(acledData, {
+                pointToLayer: function(feature, layer){
+                    return L.circleMarker(layer, {
+                        radius: 5,
+                        color: 'whitesmoke',
+                        opacity: 1,
+                        weight: 2,
+                        fillOpacity: .9,
+                        fillColor: '#3E7BB6'
+                    });
+                    
+                    
+                }
+            }).addTo(map);
+            
+            
+            
+        
+            
+            // when mouseover circle
+            events.on('mouseover', function(e) {
+                
+                //get props
+                var props = e.layer.feature.properties;
+//                console.log(props);
+                
+                // loop through states
+                states.eachLayer(function(layer) {
+                    
+//                    console.log(layer.feature.properties);
+                    
+                    // compare names circle and state
+                    // if same, change the style of the state
+                    if(props.admin1 == layer.feature.properties.st_name) {
+                        layer.setStyle( { 
+                            weight: 1, 
+                            color: 'whitesmoke', 
+                            fillOpacity: .3,
+                            } );
+                    }
+                    
+                    
+                
+                });
+                
+            });
+            
+             //revert states back to hidden
+            events.on('mouseout', function(layer) {
+                
+                 states.eachLayer(function(layer) {
+                    layer.setStyle( { weight: .2, fillOpacity: 0 } );  
+                 });
+                
+            });
+            
+            
+        infoWindow();
+        }
+        
+        
+        
+        function sequenceUI() {
+            
+            //slider functionality
+        };
+        
+        
+       
+    
+        function infoWindow() {
+            
+            var info = $('#info');
+            events.on('mouseover', function(e) {
+
+                var props = e.layer.feature.properties;
+    //            console.log(props);
+
+                    info.show();
+
+                    $('#info span').text(props.event_date);
+                    $(".notes span:first-child").text(String(props.notes));
+
+                    e.layer.setStyle({ color: 'yellow' });
+                });
+            
+            
+        events.on('mouseout', function(e) {
+            info.hide();
+            
+            //change color for affordance that point has already been viewed
+            e.layer.setStyle({ fillColor: 'green', color: 'whitesmoke' });
+        });  
+        $(document).mousemove(function(e){
+            // offset from mouse position
+            info.css({"left": e.pageX + 6, "top": e.pageY - info.height() - 15}); 
+            // switch right in crash
+            if(info.offset().top < 4) {
+                info.css({"top": e.pageY + 15});
+            }
+            // switch left in crash
+            if(info.offset().left + info.width() >= $(document).width() - 40) {
+                info.css({"left": e.pageX - info.width() - 30});
+            }
+        });
+        
+    }
+    
+    </script>
+</body>
+</html>
