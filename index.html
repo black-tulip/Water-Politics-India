@@ -51,7 +51,7 @@
           width: 100%;
         }
         #ui-slider {
-            width: 500px;
+            width: 530px;
             position: absolute;
             right:  50%;
             bottom: 80px;
@@ -255,6 +255,11 @@
                 "November", "December"
             ];
         
+        var cities = [];
+        //take off cities (clear cities?) if invisible.
+        //append location to cities if visible.
+        
+        
 //        var stateGDP = {};
 
         var data = {};
@@ -290,7 +295,7 @@
             
         })
              
-        var monthValues = [3,3,7,5,4,3,2,0,4,14,10,12,4,11,15,16];
+        var monthValues = [3,3,7,5,4,3,2,0,4,14,10,12,4,11,15,16,21];
 		
 						// Draw a sparkline for the #sparkline element
 						$('#spark').sparkline(monthValues, {
@@ -317,7 +322,8 @@
                                     12: 'Jan 2016:',
                                     13: 'Feb 2016:',
                                     14: 'Mar 2016:',
-                                    15: 'Apr 2016:'
+                                    15: 'Apr 2016:',
+                                    16: 'May 2016:'
                                     
                                 }
                             },
@@ -395,7 +401,7 @@
                 var props = e.layer.feature.properties;
 //                console.log(props);
                 
-                
+                e.layer.setStyle({ radius: 9, stroke: true });
                 
                 // loop through states
                 states.eachLayer(function(layer) {
@@ -426,7 +432,7 @@
             events.on('mouseout', function(e) {
                 
 //                layer.toBack();
-                e.layer.setStyle({ stroke: false, color: 'whitesmoke'});
+                e.layer.setStyle({ stroke: false, color: 'whitesmoke', radius: 6});
                  
                 states.eachLayer(function(layer) {
                     layer.setStyle( { weight: .5, fillOpacity: 0 } );  
@@ -479,7 +485,7 @@
             // Create two timestamps to define a range.
                 range: {
                     min: timestamp('January 2015'),
-                    max: timestamp('May 2016')
+                    max: timestamp('June 2016')
                 },
                 connect: true,
                 behaviour: 'drag',
@@ -488,7 +494,7 @@
                 step: 30.4 * 24 * 60 * 60 * 1000,
 
             // Two more timestamps indicate the handle starting positions.
-                start: [ timestamp('January 2015'), timestamp('May 2016') ],
+                start: [ timestamp('January 2015'), timestamp('June 2016') ],
 
             // No decimals
 //                format: wNumb({
