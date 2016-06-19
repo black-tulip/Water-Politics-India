@@ -51,7 +51,7 @@
           width: 100%;
         }
         #ui-slider {
-            width: 530px;
+            width: 650px;
             position: absolute;
             right:  50%;
             bottom: 80px;
@@ -98,19 +98,19 @@
             position: absolute;
             text-align: center;
             max-width: 300px;
-            right: 15px;
-            top: 15px;
+            bottom: 30%;
+            left: 15px;
             display: none;
             background: whitesmoke;
             border: 1px #d3d3d3;
             padding: 2px 6px;
             border-radius: 5px;
-            opacity: .75;
+            opacity: .9;
         }
         #info p {
             margin: 3px 0 4px;
-            font-size: .7em;
-            text-shadow: 1px 1px grey;
+            font-size: .8em;
+/*            text-shadow: 1px 1px grey;*/
         }
         #info span:last-child {
             font-size: 1.3em;
@@ -122,13 +122,14 @@
             height: 5%;
             text-align: center;
             font-weight: bold;
-            text-shadow: 2px 2px black;
+/*            text-shadow: 2px 2px black;*/
         }
         .noUi-connect {
             background: #00233D
         }
         .noUi-handle {
             background: #00233D;
+            background-size: contain;
         }
         .noUi-background {
             background: #BDBDBD;
@@ -204,7 +205,7 @@
         <h2>Date<br/><span></span></h2>
         <h2 class = 'location'>City/Village<br/><span></span></h2>
         <h2 class = 'state'>State<br/><span></span></h2>
-        <h2 class = 'gdp'>GDP Growth 2014<br/><span></span>%</h2>
+        <h2 class = 'gdp'>State GDP Growth 2014<br/><span></span>%</h2>
         <p class="notes"><span></span></p>
     </div>
     
@@ -217,7 +218,7 @@
             zoom: 5,
             minZoom: 5,
             maxZoom: 8,
-            maxBounds: L.latLngBounds([5, 70],[35, 110]),
+            maxBounds: L.latLngBounds([5, 60],[35, 120]),
             
         });
         
@@ -300,8 +301,8 @@
 						// Draw a sparkline for the #sparkline element
 						$('#spark').sparkline(monthValues, {
 							type: "bar",
-							barWidth: 30,
-                            barColor: '#BDBDBD',
+							barWidth: 37,
+                            barColor: '#6B0000',
                             barOpacity: .6,
 							height: '55px',
                             tooltipFormat: '{{offset:offset}} {{value}}',
@@ -360,8 +361,9 @@
             var states = L.geoJson(geoData, {
                  style: function(feature) {
                     return {
-                            weight: .5,
+                            weight: .8,
                             fillOpacity: 0,
+                            color: 'whitesmoke'
                         };
                 }                
             }).addTo(map);
@@ -561,18 +563,18 @@
 //                e.layer.setStyle({ stroke: false, color: 'whitesmoke'});
 //                e.layer.toBack();
             });  
-            $(document).mousemove(function(e){
-                // offset from mouse position
-                info.css({"left": e.pageX + 6, "top": e.pageY - info.height() - 15}); 
-                // switch right in crash
-                if(info.offset().top < 4) {
-                    info.css({"top": e.pageY + 15});
-                }
-                // switch left in crash
-                if(info.offset().left + info.width() >= $(document).width() - 40) {
-                    info.css({"left": e.pageX - info.width() - 30});
-                }
-            });
+//            $(document).mousemove(function(e){
+//                // offset from mouse position
+//                info.css({"left": e.pageX + 6, "top": e.pageY - info.height() - 15}); 
+//                // switch right in crash
+//                if(info.offset().top < 4) {
+//                    info.css({"top": e.pageY + 15});
+//                }
+//                // switch left in crash
+//                if(info.offset().left + info.width() >= $(document).width() - 40) {
+//                    info.css({"left": e.pageX - info.width() - 30});
+//                }
+//            });
         
     }
         
