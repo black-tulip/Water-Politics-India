@@ -9,7 +9,6 @@
     <script src='https://code.jquery.com/jquery-1.12.0.min.js'></script> 
     <script src="libs/noUiSlider.8.5.1/nouislider.min.js"></script>
     <script src="libs/jquery.sparkline.js"></script>
-    <script src="libs/oms.min.js"></script>
     
     <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
     <link href='libs/noUiSlider.8.5.1/nouislider.min.css' rel='stylesheet' />
@@ -63,7 +62,7 @@
             width: 650px;
             position: absolute;
             left:  45%;
-            bottom: 80px;
+            bottom: 65px;
         }
         #spark {
             position: absolute;
@@ -85,16 +84,31 @@
             top: 32px;
             text-align: right
         }
+        #cities {
+            position: absolute;
+            align-items: center;
+            top: 0;
+            color: whitesmoke;
+            left: 25%;
+            width: 75%;
+            opacity: .75;
+            font-size: .85em;
+            background: #00233D;
+            padding: 2px 6px;
+            border-left: 3px solid darkgray;
+        }
         #legend {
             position: absolute;
             align-items: center;
-            bottom: 20px;
+            bottom: 25px;
             border-radius: 5px; 
             color: white;
-            right: 0;
+            left: 26%;
             width: 10%;
             opacity: .75;
             border-radius: 5px;
+            outline-color: whitesmoke;
+            outline-width: 1px;
             
         }
         #legend h3 {
@@ -127,11 +141,9 @@
             color: #191B28;
         }
         .bullet {
-/*            border-radius: 5px;*/
             height: 5%;
             text-align: center;
             font-weight: bold;
-/*            text-shadow: 2px 2px black;*/
         }
         .noUi-connect {
             background: #00233D
@@ -152,8 +164,8 @@
             width: 25%;
             color: whitesmoke;
             background: #00233D;
-            border-left: 3px solid whitesmoke;
-            overflow-y: scroll;
+            border-right: 3px solid darkgray;
+            overflow-y: auto;
             opacity: .8
         }
         #side-panel p {
@@ -161,7 +173,7 @@
             padding: 0 25px 0 15px;
             color: whitesmoke;
             text-align: left;
-            font-size: 1em;
+            font-size: .95em;
         }
         #side-panel p:after {
             content: '';
@@ -181,19 +193,19 @@
     <div id='header'></div>
     <div id='side-panel'>
         <h1>Does Water Risk <br/>Predict Conflict?</h1>
-        <h2><strong>CONFLICT DATA &amp; WATER SCARCITY IN INDIA 2015-16<br/> Map created by Nils Lewis: Portfolio | Github</strong></h2>
+        <h2><strong>CONFLICT DATA &amp; WATER SCARCITY IN INDIA<br/> Map created by Nils Lewis: Portfolio | Github</strong></h2>
         
-        <p>Two weak monsoons and the ever increasing H20 demands of a vibrant developing economy have left India facing it's most severe water crisis in recent memory. According the <cite>The Economist</cite> 330 million people are facing acute water shortages. That is a number equal to the entire population of the United States.<br/><br/></p>
-        <p>The impact ranges from local governments unable to provide potable water to power plants forced to shut down because the rivers that provide cooling are no longer flowing. As this critical resource dries up, increased competition breeds conflict between residents, farmers, industry, local governments, and other communities.<br/><br/></p>
-        <p>Water is a renewable resource, so proper water management policies can and hopefully will bring this crisis under control. But for now, studying the points of conflict is key to understanding the political implications of the crisis, and perhaps could illustrate where to start in fixing it.<br/><br/></p>
-<!--        <p><img src="images/legend.png" alt="legend"></p>-->
+        <p>Two weak monsoons and the ever increasing H20 demands of a vibrant developing economy have left India facing it's most severe water crisis in recent memory. According the <cite>The Economist</cite> 330 million people are facing acute water shortages. That is a number equal to the entire population of the United States.<br/></p>
+        <p>The impact ranges from local governments unable to provide potable water to power plants forced to shut down because the rivers that provide cooling are no longer flowing. As this critical resource dries up, increased competition breeds conflict between residents, farmers, industry, local governments, and other communities. <strong>Instances of water related conflict are increasing.</strong><br/></p>
+        <p>Water is a renewable resource, so proper water management policies can and hopefully will bring this crisis under control. But for now, studying the points of conflict is key to understanding the political implications of the crisis, and perhaps could illustrate where to start in fixing it.<br/></p>
         <h2><strong>THE MAP</strong></h2>
-        <p>This map explores the intersection of water issues and political unrest. Each point is a water-related conflict event such as a protest, riot, or an instance of intercommunal strife. Hover over the events for details on each conflict.<br/><br/> </p>
-        <p>Move the slider to select a timeframe of interest. Once a duration is selected, the slider can be moved as a unit to compare the same duration at different points on the timeline. Doing so reveals that instances of water related conflict are increasing.<br/><br/></p>
+        <p>This map explores the intersection of water issues and political unrest. Each point is a water-related conflict event such as a protest, riot, or an instance of intercommunal strife. Hover over the events for details on each conflict.<br/></p>
+        <p>Move the slider to select a timeframe of interest. Once a duration is selected, the slider can be moved as a unit to compare the same duration at different points on the timeline.<br/><br/></p>
         <h2><strong>THE DATA</strong></h2>
         <p>The conflict event data is drawn from the <cite>Armed Conflict Location and Event (ACLED) Asia</cite> dataset. The asia is only 1.5 years old, and I look forward to updating this map as the data grows.<br/><br/></p>
         <p>The water data reflects the Overall Water Risk categories from the World Resources Institute's <cite>AQUEDUCT Water Risk Atlas</cite>.<br/><br/></p>
     </div>
+    <div id='cities'><text class = 'count'><strong><span></span> CITIES IMPACTED:</strong></text><span></span></div>
     <div id='legend'>	
         <div class="bullet" style="background: #whitesmoke">WATER RISK</div>
         <div class="bullet" style="background: #F11810"> Extremely High</div>
@@ -227,7 +239,7 @@
             center: [21.14, 90.08],
             zoom: 5,
             zoomControl: false,
-            minZoom: 5,
+            minZoom: 4,
             maxZoom: 8,
             maxBounds: L.latLngBounds([5, 20],[35, 117]),
             
@@ -235,7 +247,7 @@
         
         //add medium opacity light map
         var NASAGIBS_ViirsEarthAtNight2012 = L.tileLayer('http://map1.vis.earthdata.nasa.gov/wmts-webmerc/VIIRS_CityLights_2012/default/{time}/{tilematrixset}{maxZoom}/{z}/{y}/{x}.{format}', {
-            attribution: 'Imagery provided by services from the Global Imagery Browse Services (GIBS), operated by the NASA/GSFC/Earth Science Data and Information System (<a href="https://earthdata.nasa.gov">ESDIS</a>) with funding provided by NASA/HQ.',
+            attribution: 'Imagery provided by services from the Global Imagery Browse Services (GIBS), operated by the NASA/GSFC/Earth Science Data and Information System (<a href="https://earthdata.nasa.gov">ESDIS</a>) with funding provided by NASA/HQ, Data courtesy of ACLED ASIA Dataset; World Resources Institute;',
             bounds: [[80, 30],[0, 130]],
             minZoom: 1,
             maxZoom: 8,
@@ -244,8 +256,9 @@
             time: '',
             tilematrixset: 'GoogleMapsCompatible_Level'
         }).addTo(map);
-    
         
+        L.control.scale({position: 'bottomright'}).addTo(map);
+    
         
         //create values for slider. 
         var dateValues = [
@@ -267,12 +280,8 @@
                 "November", "December"
             ];
         
+        //create cities variable for loading the cities ticker. 
         var cities = [];
-        //take off cities (clear cities?) if invisible.
-        //append location to cities if visible.
-        
-        
-//        var stateGDP = {};
 
         var data = {};
 	   
@@ -300,26 +309,11 @@
             
             //fire the function to draw the data to the map
             drawMap(data.waterData, data.eventData, data.statesData);
-            
-            
-            
-            
-            // Values to render
-		
-            
+                     
         })
-             
-
-        var lightIcon = L.Icon.Default;
-            var darkIcon  = L.Icon.Default.extend({options: {iconUrl: L.Icon.Default.imagePath + '/marker-desat.png'}});
-            
-            var oms = new OverlappingMarkerSpiderfier(map);
-            
-//        
-//        
             
         
-        
+        // create sparkline bar graph with monthly summed event data. 
         var monthValues = [3,3,7,5,4,3,2,0,4,14,10,12,4,11,15,16,21];
 		
 						// Draw a sparkline for the #sparkline element
@@ -371,7 +365,7 @@
                 weight: .3,
                 opacity: .8,
                 color: getColor(feature.properties['owr_cat']),
-                fillOpacity: 0.6
+                fillOpacity: 0.55
             };
         }
 
@@ -400,11 +394,11 @@
                     
                         return L.circleMarker(layer, {
                             radius: 5,
-                            color: '#3E7BB6',
+                            color: 'whitesmoke',
                             opacity: 1,
                             weight: 2,
                             fillOpacity: 1,
-                            fillColor: 'whitesmoke',
+                            fillColor: '#3E7BB6',
                             attribution: "ACLED Asia"
                         });
                 }
@@ -412,53 +406,18 @@
             }).addTo(map);
             
         
-            // when mouseover circle
+            // when mouseover circle increase radius.
             events.on('mouseover', function(e) {
-                
-                //get props
-//                var props = e.layer.feature.properties;
-//                console.log(props);
                 
                 e.layer.setStyle({ radius: 9, stroke: true })
                 
-//                loc = e.layer.getLatLng();
-//                lat = loc.lat;
-//                lng = loc.lng;
-//                newLng = lng + .1;
-//                console.log(lat);
-//                console.log(newLng);
-//                e.layer.setLatLng([lat,newLng]);
-                
-                // loop through states
-//                states.eachLayer(function(layer) {
-//                    
-////                    stateGDP = [layer.feature.properties.st_name, layer.feature.properties._2013_14_growth]
-////                    console.log(stateGDP);
-//                    
-////                    console.log(layer.feature.properties);
-//                    
-//                    // compare names circle and state
-//                    // if same, change the style of the state
-//                    if(props.admin1 == layer.feature.properties.st_name) {
-//                        
-//                        layer.setStyle( { 
-//                            weight: 1, 
-//                            color: 'whitesmoke', 
-//                            fillOpacity: .3,
-//                            } );
-//                    }
-//                    
-//                    
-//                
-//                });
-                
             });
             
-             //revert states back to hidden
+             //set style to indicate viewed, and reorder layers to expose new data. 
             events.on('mouseout', function(e) {
                 
 
-                e.layer.setStyle({ weight: 2, color: '#850000', radius: 7, fillOpacity: .7}).bringToBack();
+                e.layer.setStyle({weight: 3, color: '#3E7BB6', radius: 7, fillColor: 'whitesmoke', fillOpacity: .8}).bringToBack();
                  
                 states.eachLayer(function(layer) {
                     layer.bringToBack();
@@ -473,16 +432,20 @@
             dateSlider.noUiSlider.on('update', function( values, handle ) {
                 dateValues[handle].innerHTML = formatDate(new Date(+values[handle]));
                 updateMap(events);
+                
             });
             
             infoWindow(events);
             
-//            
         }
         
+        //updates the map when slider is dragged. 
+        
         function updateMap(events) {
-            //updates the points to hide those outside timeframe
             
+            cities = [];
+            
+            //updates the points to hide those outside timeframe
             events.eachLayer(function(layer) {
                 
                 var sliderVal = dateSlider.noUiSlider.get();
@@ -492,22 +455,45 @@
 //                console.log(min, max);
                 var time = timestamp(layer.feature.properties.event_date);
 //                console.log(time);
-            
+                
+                
+                
                 if(time < min || time > max) {
 
-                    layer.setStyle({ fill: false, stroke: false, radius: 5, color: '#3E7BB6', fillOpacity: 1})
+                    layer.setStyle({weight: 2, fill: false, stroke: false, radius: 5, fillColor: '#3E7BB6', color: 'whitesmoke', fillOpacity: .9})
                 
                         } else {
                             layer.setStyle({ fill: true, stroke:true })
+                            
+                            cities.push(" " + (layer.feature.properties.location));
+                            
                         }
-                        
-            })
+                   
+                      
+                    })
+            
+            //removes duplicate values from cities list. 
+
+            var uniqueVals = [];
+            $.each(cities, function(i, el){
+                if($.inArray(el, uniqueVals) === -1) uniqueVals.push(el);
+            });
+            
+            uniqueVals.sort();
+            
+            count = uniqueVals.length;
+            
+            //loads cities and count onto ticker. 
+            $('#cities span').text(uniqueVals);
+            $('.count span').text(count);
+
+        
         }
         
-        
+        //slider functionality
         function sequenceUI() {
             
-            //slider functionality
+            
             
             dateSlider = document.getElementById('ui-slider');
             
@@ -526,16 +512,10 @@
             // Two more timestamps indicate the handle starting positions.
                 start: [ timestamp('January 2015'), timestamp('June 2016') ],
 
-            // No decimals
-//                format: wNumb({
-//                    decimals: 0
-//                })
             });
             
             
         };
-        
-        
         
         
         // Append a suffix to dates.
@@ -552,24 +532,25 @@
 
         // Create a string representation of the date.
         function formatDate ( date ) {
-            return weekdays[date.getDay()] + ", " +
-                date.getDate() + nth(date.getDate()) + " " +
-                months[date.getMonth()] + " " +
-                date.getFullYear();
+            return months[date.getMonth()] + " " + date.getDate() + nth(date.getDate()) + " " +
+            date.getFullYear();
         }
+        
         
         function timestamp(str){
             return new Date(str).getTime();   
         }
         
-
+        
+        //manages presentation of info window when hovering over event. 
+        
         function infoWindow(events) {
             
             var info = $('#info');
             events.on('mouseover', function(e) {
 
                 var props = e.layer.feature.properties;
-//                console.log(stateGDP);
+
                     info.show();
                     
                     date = formatDate(new Date(props.event_date));
@@ -580,30 +561,13 @@
                     $('.location span').text(props.location);
                     $('.gdp span').text(props.growth2014);                    
                     
-//                    e.layer.setStyle({ stroke: true, color: 'yellow' });
                 });
             
                 
             events.on('mouseout', function(e) {
                 info.hide();
-            
-                //change color for affordance that point has already been viewed
-//                e.layer.setStyle({ stroke: false, color: 'whitesmoke'});
-//                e.layer.toBack();
             });  
-//            $(document).mousemove(function(e){
-//                // offset from mouse position
-//                info.css({"left": e.pageX + 6, "top": e.pageY - info.height() - 15}); 
-//                // switch right in crash
-//                if(info.offset().top < 4) {
-//                    info.css({"top": e.pageY + 15});
-//                }
-//                // switch left in crash
-//                if(info.offset().left + info.width() >= $(document).width() - 40) {
-//                    info.css({"left": e.pageX - info.width() - 30});
-//                }
-//            });
-        
+
     }
         
         
