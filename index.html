@@ -9,6 +9,7 @@
     <script src='https://code.jquery.com/jquery-1.12.0.min.js'></script> 
     <script src="libs/noUiSlider.8.5.1/nouislider.min.js"></script>
     <script src="libs/jquery.sparkline.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     
     <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
     <link href='libs/noUiSlider.8.5.1/nouislider.min.css' rel='stylesheet' />
@@ -62,15 +63,22 @@
           width: 100%;
         }
         #ui-slider {
-            width: 650px;
+            width: 30%;
             position: absolute;
             left:  45%;
             bottom: 65px;
+        }
+        #chart {
+            width: 30%;
+            position: absolute;
+            left:  45%;
+            bottom: -60px;
         }
         #spark {
             position: absolute;
 /*            right:  50%;*/
             bottom: 30px;
+            width: 100%
         }
         #event-start{
             width: 50%;
@@ -122,6 +130,7 @@
 /*            font-weight: 500;*/
             color: whitesmoke;
         }
+/*
         #info {
             padding: 8px 15ps;
             position: absolute;
@@ -136,15 +145,34 @@
             border-radius: 5px;
             opacity: .9;
         }
+*/
+        #info {
+            padding: 8px 15ps;
+            position: absolute;
+            text-align: center;
+            max-width: 225px;
+            bottom: 20%;
+            right: 15px;
+            display: none;
+            background: #00233D;
+            border: 1px #d3d3d3;
+            padding: 2px 6px;
+            border-radius: 5px;
+            opacity: .7;
+        }
         #info p {
             margin: 3px 0 4px;
             font-size: .75em;
 /*            text-shadow: 1px 1px grey;*/
         }
+        #info h2 {
+            background: #00233D;    
+            color: whitesmoke;
+        }
         #info span:last-child {
             font-size: 1.2em;
             font-weight: 500;
-            color: #191B28;
+            color: whitesmoke;
         }
         .bullet {
             height: 5%;
@@ -232,20 +260,41 @@
         <div class="bullet" style="background: #FFCC00"> Low to medium</div>
 	
     </div>
-    	
+    <div id='chart'>
+            <svg width ="101%" alignment='center'>
+                <rect x="0"></rect>
+                <rect x="5.8%"></rect>
+                <rect x="11.6%"></rect>
+                <rect x="17.4%"></rect>
+                <rect x="23.2%"></rect>
+                <rect x="29%"></rect>
+                <rect x="34.8%"></rect>
+                <rect x="40.6%"></rect>
+                <rect x="46.4%"></rect>
+                <rect x="52.2%"></rect>
+                <rect x="58%"></rect>
+                <rect x="63.8%"></rect>
+                <rect x="69.6%"></rect>
+                <rect x="75.4%"></rect>
+                <rect x="81.2%"></rect>
+                <rect x="87%"></rect>
+                <rect x="92.8%"></rect>
+             </svg>
+        </div>
     <div id="ui-slider">
 <!--         <input type="range" min="January 2015", max="Current", value="1", step="1" class="slider">-->
-        <div id='spark'></div>
+<!--        <div id='spark'></div>-->
+        
         <div id="event-start">January 2015</div>
         <div id="event-end">May 15, 2016</div>
     </div>
     
 <!--    <div id='year'><b>Month, Year: </b><span>January 2015</span></div>-->
     <div id="info">
-        <h2>Date<br/><span></span></h2>
-        <h2 class = 'location'>City/Village<br/><span></span></h2>
-        <h2 class = 'state'>State<br/><span></span></h2>
-        <h2 class = 'gdp'>State GDP Growth 2014<br/><span></span>%</h2>
+        <h2><span></span></h2>
+        <h2 class = 'location'><strong>City/Village</strong><br/><span></span></h2>
+        <h2 class = 'state'><strong>State</strong><br/><span></span></h2>
+        <h2 class = 'gdp'><strong>State GDP Growth 2014</strong><br/><span></span>%</h2>
         <p class="notes"><span></span></p>
     </div>
     
@@ -329,7 +378,23 @@
             drawMap(data.waterData, data.eventData, data.statesData);
                      
         })
+        
+            var ratData = [3,3,7,5,4,3,2,0,4,14,10,12,4,11,15,16,21];
+
+            var svg = d3.select('#chart')
+                        .append( 'svg')
             
+
+            d3.selectAll( "rect" )
+                  .data( ratData )
+                  .attr('fill', '#6B0000')
+                  .attr('width', '5.5%')
+                  .attr( "height", function(d){
+                    return d/10 * 20;
+                  })
+                  .attr( "y", function(d){
+                    return 150-d/10 * 20;
+                  });
         
         // create sparkline bar graph with monthly summed event data. 
         var monthValues = [3,3,7,5,4,3,2,0,4,14,10,12,4,11,15,16,21];
@@ -337,7 +402,6 @@
 						// Draw a sparkline for the #sparkline element
 						$('#spark').sparkline(monthValues, {
 							type: "bar",
-							barWidth: 37,
                             barColor: '#6B0000',
                             barOpacity: .6,
 							height: '55px',
